@@ -1,0 +1,27 @@
+{
+  "name": "kit-kafka-tool",
+  "version": "0.0.1",
+  "description": "A command line tool for publishing message to kafka topics.",
+  "main": "test.js",
+  "bin": {
+    "kit-kafka-tool": "kt.js"
+  },
+  "dependencies": {
+    "commander": "^2.8.1",
+    "kafka-node": "^0.2.28"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "kafka",
+    "cli",
+    "producer"
+  ],
+  "author": "Stephan Wallentin",
+  "license": "ISC",
+  "bin": {
+    "kt": "bin/kt.js"
+  }
+}
