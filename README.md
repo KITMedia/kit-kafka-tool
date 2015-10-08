@@ -51,3 +51,11 @@ The [env] argument loads it’s information from the file *~./kt/config.json* wh
 	}
 }
 ```
+
+# Useful commands
+
+List all public IP-adresses using the aws tool:
+```
+aws ec2 describe-instances --filters Name=tag:app,Values=kafka --query "Reservations[*].Instances[*].PublicIpAddress" --output=text
+```
+Download the Amazon EC2 CLI here: https://aws.amazon.com/cli/
