@@ -16,12 +16,12 @@ $ nano ~/.kt/config.json
 # Usage
 Send 10 message using a CLI argument as the message payload.
 ```
-$ kt l -n 10 -t kvid -j message.json
+$ kt l -n 10 -t kvid -m MyMessage
 ```
 
 Send 10 messages using a CLI argument as a path to a JSON file containing your message payload.
 ```
-$ kt l -n 10 -t kvid -m MyMessage
+$ kt l -n 10 -t kvid -j message.json
 ```
 
 ```
