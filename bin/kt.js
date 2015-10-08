@@ -1,19 +1,14 @@
 #! /usr/bin/env node
-
-//kt [env] [arguments]
-//-p – produce
-//-n – number of messages
-//-i – interval, sends -n number of messages per interval
-//kt local -p kvid -m "message" -n 10
-//kt local -p kvid -json ~/file/location.json -n 10 -i 3600
-
 var program = require('commander'),
     kafka = require('kafka-node'),
+    fs = require('fs'),
+    configFilePath = [process.env.HOME, '.kt/config.json'].join('/'),
     Producer = kafka.Producer,
-    client = new kafka.Client(),
+    client,
     producer,
-    envValue,
+    env,
     payload,
+    config,
     validate =function (value, errorMessage) {
         if (typeof value === 'undefined') {
             console.error(errorMessage);
@@ -58,16 +53,31 @@ program
     .option('-t --topic [value]', 'Topic')
     .option('-m --message [value]', 'Message to send to topic')
     .option('-j --json [value]', 'JSON file containing the message payload')
-    .action(function (env) {
-            envValue = env;
+    .action(function (envValue) {
+            env = envValue;
         });
 
 program.parse(process.argv);
 
-validate(envValue, 'No [env] specified');
+validate(env, 'No [env] specified');
 validate(program.numberOfMessages, 'Missing argument -n, amount of messages to send to a kafka topic.');
 validate(program.topic, 'Missing argument -t, kafka destination topic.');
 
+if( !fs.existsSync(configFilePath)) {
+    console.error('Missing configuration file in folder', configFilePath);
+    program.outputHelp();
+    process.exit(1);
+}
+
+config = require(configFilePath);
+env = config.env[env];
+
+validate(env, ['Environment', env, 'could not be found in configuration file:', configFilePath].join(' '));
+validate(env.zookeeper,'Could not find zookeeper property in environment file' );
+validate(env.zookeeper.host, 'Could not find zookeeper.host property in environment file.');
+validate(env.zookeeper.port, 'Could not find zookeeper.port property in environment file.');
+
+client = new kafka.Client([env.zookeeper.host, env.zookeeper.port].join(':'));
 producer = new Producer(client);
 payload = makePayload(program);
 
@@ -78,5 +88,4 @@ producer.on('ready', function () {
                 process.exit(0);
             });
     });
-
 });
